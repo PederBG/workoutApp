@@ -1,6 +1,9 @@
 package workoutApp;
 
 
+import java.text.ParseException;
+import java.text.ParsePosition;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -156,12 +159,21 @@ public class Main {
 				+ "   - Get this info again: INFO or HELP\n"
 				+ "   - Exit of of the app: QUIT or EXIT\n");
 	}
+	
+    public static boolean isValidDateTime(String datetime) {
+	    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+	    sdf.setLenient(false);
+	    try {sdf.parse(datetime); return true;}
+	    catch (ParseException e) {return false;}
+}
 
-	public static void main(String[] args) {
+
+	public static void main(String[] args) throws ParseException {
 		Main m = new Main();
-		System.out.println(m.resultLogs("Benkpress", "2018-02-01 00:00:00", "2018-05-01 00:00:00"));
 
-		m.textAppLoop();
+		//m.textAppLoop();
+		
+		//System.out.println(checkBirthDay("2018-02-30 12:00:00"));
 	}
 
 }
