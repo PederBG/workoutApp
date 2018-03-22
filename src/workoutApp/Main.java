@@ -162,10 +162,9 @@ public class Main {
 
 	public static void main(String[] args) {
 		Main m = new Main();
-		System.out.println(m.similarExercises("Brystøvelser"));
-		//System.out.println(m.resultLogs("Benkpress", "2018-02-01 00:00:00", "2018-05-01 00:00:00"));
+		System.out.println(m.resultLogs("Benkpress", "2018-02-01 00:00:00", "2018-05-01 00:00:00"));
 
-		//m.textAppLoop();
+		m.textAppLoop();
 	}
 
 }
