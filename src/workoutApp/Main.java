@@ -44,7 +44,7 @@ public class Main {
 		return res;
 	}
 
-	//Gir ut alle �velser som er i samme ex_group
+	//Gives all exercises that are in the same exercise group
 	public ArrayList<String> similarExercises(String exGroupName) { //oppg 4
 		String sql = "SELECT ex_name FROM ex_in_exgroup WHERE group_name = '"+exGroupName+"'";
 		ArrayList<ArrayList<String>> similarExercises = UseDB.getTable(sql);
@@ -174,7 +174,9 @@ public class Main {
 						arg3 = scan.nextLine();
 					}
 					
-					System.out.println(resultLogs(arg1, arg2, arg3));
+					ArrayList<ArrayList<String>> res = resultLogs(arg1, arg2, arg3);
+					if (res.isEmpty()) { System.out.println("No results from the given time period and exercise"); }
+					else { System.out.println(res); }
 					break;
 
 				case "EXINGROUP":

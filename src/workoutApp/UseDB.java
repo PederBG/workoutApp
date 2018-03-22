@@ -6,6 +6,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Properties;
 
 /*
  * Help class to enable communication with remote MySQL database
@@ -20,8 +21,14 @@ public class UseDB {
 			
 			Connection conn = null;
 			try {
+				Properties properties = new Properties();
+				properties.setProperty("user", "pederbg_dbproj");
+				properties.setProperty("password", "dbproj");
+				properties.setProperty("useSSL", "false");
+				properties.setProperty("autoReconnect", "true");
+				
 			    conn =
-			       DriverManager.getConnection("jdbc:mysql://mysql.stud.ntnu.no/pederbg_workouts","pederbg_dbproj","dbproj");
+			       DriverManager.getConnection("jdbc:mysql://mysql.stud.ntnu.no/pederbg_workouts", properties);
 
 			} catch (SQLException ex) {
 			    System.out.println("SQLException: " + ex.getMessage());
@@ -130,6 +137,4 @@ public class UseDB {
 		    System.out.println("Process finished, connection closed");
 			return result_status;
 		}
-
-
 }
