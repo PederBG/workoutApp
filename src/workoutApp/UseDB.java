@@ -115,6 +115,7 @@ public class UseDB {
 			    values = values.substring(0, values.length() - 2);
 			    
 				String query = "INSERT INTO " + table + " (" + cols + ") VALUES (" + values + ")";
+				System.out.println(query);
 				stmt.executeUpdate(query);
 				System.out.println("Row added!");
 				result_status = true;

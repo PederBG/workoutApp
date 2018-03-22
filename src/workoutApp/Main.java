@@ -11,32 +11,38 @@ import org.joda.time.LocalTime;
 public class Main {
 	
 	//--------------------------------------------------------------------------------------
-	public void registerEquipment(String name,String description) { //oppg 1
-		UseDB.addRow("equipment",name,description);
+	public boolean registerEquipment(String name, String description) { //oppg 1
+		return UseDB.addRow("equipment", name, description);
 	}
-	public void registerExercise(String name,String description) { //oppg 1
-		UseDB.addRow("exercise",name,description);
+	
+	public boolean registerExercise(String name, String description) { //oppg 1
+		return UseDB.addRow("exercise", name, description);
 	}
-	public void registerWorkout(int year, int month, int day,int hour,int minute, int second,String info,int shape,int performance,String note) {
-		DateTime date = new DateTime(year,month,day,0,0,0);   //oppg 1 (litt usikker p� om mySQL godtar date og time)
-		LocalTime time = new LocalTime(hour,minute,second);
-		
-		UseDB.addRow("workout",date,time,info,shape,performance,note);
+	
+	//datetime format: yyyy-mm-dd tt:mm:ss, length format: tt:mm:ss
+	public void registerWorkout(String datetime, String length, String info, int shape, int performance, String note) {
+		UseDB.addRow("workout", datetime, length, info, shape, performance, note);
 	}
-	public void registerGroup(String name,String description) { //oppg 4
+	
+	public void registerGroup(String name, String description) { //oppg 4
 		UseDB.addRow("ex_group",name,description);
 	}
 	
 	public ArrayList<ArrayList<String>> latestWorkouts(int n) { //oppg 2
-		ArrayList<ArrayList<String>> latestWorkouts = UseDB.getTable("SELECT * FROM workout ORDER by (date_time) DESC limit 0,"+n+";"); //Funker, men burde legge til flere workouts for � v�re sikker
-		return latestWorkouts;
+		ArrayList<ArrayList<String>> res = UseDB.getTable("SELECT * FROM workout WHERE date_time < CURDATE() ORDER by (date_time) DESC limit 0,"+n+";"); 
+		return res;
 	}
-	public ArrayList<ArrayList<String>> resultLogs(String exercise,int year1,int month1,int day1,int year2,int month2,int day2) { //oppg 3
-		DateTime date1 = new DateTime(year1,month1,day1,0,0,0); 
-		DateTime date2 = new DateTime(year2,month2,day2,0,0,0);
-		ArrayList<ArrayList<String>> resultLogs = UseDB.getTable("SELECT performance FROM ((workout join ex_in_workout on workout.datetime = ex_in_workout.workout_date_time) join exercise on ex.ex_name = exercise.name) WHERE ex_name="+exercise+" ORDER by (date_time) DESC where date_time > "+date1+" AND date_time < "+date2); //feil sql syntax
-		return resultLogs;
+	
+	//datetime format: yyyy-mm-dd tt:mm:ss, length format: tt:mm:ss
+	public ArrayList<ArrayList<String>> resultLogs(String exercise, String startDatetime, String endDatetime) { //oppg 3
+		ArrayList<ArrayList<String>> res = UseDB.getTable("SELECT DISTINCT name, date_time,"
+				+ " performance, note FROM ((workout join ex_in_workout on workout.date_time ="
+				+ " ex_in_workout.workout_date_time) join exercise on exercise.name = exercise.name)"
+				+ " WHERE name = '" + exercise + "' AND date_time > '" + startDatetime + "' AND date_time < '"
+				+ endDatetime + "'");
+		return res;
 	}
+	
 	public ArrayList<ArrayList<String>> similarExercises() { //oppg 4
 		 ArrayList<ArrayList<String>> similarExercises = UseDB.getTable("SQL sp�rring"); //feil sql syntax
 			return similarExercises;
@@ -51,17 +57,12 @@ public class Main {
 	public void textAppLoop() {
 		Scanner scan = new Scanner(System.in);
 		String in = "";
-		System.out.println("This is a text based workout app.\n"
-				+ "COMMANDS:\n"
-				+ "   - Regeister equipment: REGEQ\n"
-				+ "   - Regeister exercise: REGEX\n"
-				+ "   - Regeister workout: REGWORK\n"
-				+ "TODO"
-				+ "TODO"
-				+ "TODO"
-				+ "   - Exit of of the app: QUIT or EXIT\n");
+		String arg1, arg2, arg3, arg4, arg5, arg6;
+		
+		printInfo();
 		while (true) {
 			try {
+				System.out.print("Command: ");
 				in = scan.nextLine().toUpperCase();
 			}catch (Exception e) {
 				System.out.println("Invalid input");
@@ -69,13 +70,60 @@ public class Main {
 			switch (in) {
 			
 				case "REGEQ":
-					System.out.println("todo regeq");
+					System.out.print("Name: ");
+					arg1 = scan.nextLine();
+					System.out.print("Description: ");
+					arg2 = scan.nextLine();
+					registerEquipment(arg1, arg2);
 					break;
+					
 				case "REGEX":
-					System.out.println("todo regex");
+					System.out.print("Name: ");
+					arg1 = scan.nextLine();
+					System.out.print("Description: ");
+					arg2 = scan.nextLine();
+					registerExercise(arg1, arg2);
 					break;
+					
 				case "REGWORK":
-					System.out.println("todo regwork");
+					System.out.print("Workout datetime (yyyy-mm-dd tt:mm:ss): ");
+					arg1 = scan.nextLine();
+					System.out.print("Workout length (tt:mm:ss): ");
+					arg2 = scan.nextLine();
+					System.out.print("Info: ");
+					arg3 = scan.nextLine();
+					System.out.print("Shape (1-10): ");
+					arg4 = scan.nextLine();
+					System.out.print("Performance (1-10): ");
+					arg5 = scan.nextLine();
+					System.out.print("Note: ");
+					arg6 = scan.nextLine();
+					registerWorkout(arg1, arg2, arg3, Integer.parseInt(arg4), Integer.parseInt(arg5), arg6);
+					break;
+					
+				case "REGGROUP":
+					System.out.print("Name: ");
+					arg1 = scan.nextLine();
+					System.out.print("Description: ");
+					arg2 = scan.nextLine();
+					registerGroup(arg1, arg2);
+					break;
+					
+				case "RESLOG":
+					System.out.print("Exercise: ");
+					arg1 = scan.nextLine();
+					System.out.print("Start datetime (yyyy-mm-dd tt:mm:ss): ");
+					arg2 = scan.nextLine();
+					System.out.print("End datetime (yyyy-mm-dd tt:mm:ss): ");
+					arg3 = scan.nextLine();
+					System.out.println(resultLogs(arg1, arg2, arg3));
+					break;
+					
+				case "INFO":
+					printInfo();
+					break;
+				case "HELP":
+					printInfo();
 					break;
 					
 				case "QUIT":
@@ -92,15 +140,25 @@ public class Main {
 		}
 	}
 	
+	private static void printInfo() {
+		System.out.println("This is a text based workout app.\n"
+				+ "COMMANDS:\n"
+				+ "   - Regeister equipment: REGEQ\n"
+				+ "   - Regeister exercise: REGEX\n"
+				+ "   - Regeister workout: REGWORK\n"
+				+ "   - Regeister exercise group: REGGROUP\n"
+				+ "   - View results log from time period: RESLOG\n"
+				+ "TODO"
+				+ "   - Get this info again: INFO or HELP\n"
+				+ "   - Exit of of the app: QUIT or EXIT\n");
+	}
+	
 	public static void main(String[] args) {
-		Main test = new Main();
+		Main m = new Main();
+
+		System.out.println(m.resultLogs("Benkpress", "2018-02-01 00:00:00", "2018-05-01 00:00:00"));
 		
-		/*ArrayList<ArrayList<String>> test = UseDB.getTable("SELECT * FROM exercise");
-		System.out.println(test);
-				
-		System.out.println(test2.resultLogs("pullups", 2018, 1, 1, 2018, 2, 28));*/
-		
-		test.textAppLoop();
+		m.textAppLoop();
 	}
 
 }
