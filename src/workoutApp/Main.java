@@ -47,11 +47,16 @@ public class Main {
 	public ArrayList<String> similarExercises(String exGroupName) { //oppg 4
 		String sql = "SELECT ex_name FROM ex_in_exgroup WHERE group_name = '"+exGroupName+"'";
 		ArrayList<ArrayList<String>> similarExercises = UseDB.getTable(sql);
+		if (similarExercises.isEmpty()) {
+			return null;
+		}
+		else {
 		ArrayList<String> Result = new ArrayList<>();
 		for (int i = 0; i<similarExercises.size(); i++) {
 			Result.add(similarExercises.get(i).get(0));
 		}
-			return Result;
+		return Result;
+		}
 	}
 
 	public ArrayList<ArrayList<String>> numberOfWorkouts() { //oppg 5
@@ -126,6 +131,15 @@ public class Main {
 					System.out.println(resultLogs(arg1, arg2, arg3));
 					break;
 
+				case "EXINGROUP":
+					System.out.print("Exercisegroupname: ");
+					arg1 = scan.nextLine();
+					if ( similarExercises(arg1) == null) {
+						System.out.println("Invalid exercisename.. Try again!");
+					}
+					else { System.out.println("Exercises in "+arg1+": "+similarExercises(arg1));}
+					break;
+
 				case "INFO":
 					printInfo();
 					break;
@@ -155,6 +169,7 @@ public class Main {
 				+ "   - Regeister workout: REGWORK\n"
 				+ "   - Regeister exercise group: REGGROUP\n"
 				+ "   - View results log from time period: RESLOG\n"
+				+ "   - Get exercise in group: EXINGROUP\n"
 				+ "TODO"
 				+ "   - Get this info again: INFO or HELP\n"
 				+ "   - Exit of of the app: QUIT or EXIT\n");
