@@ -4,8 +4,6 @@ package workoutApp;
 import java.util.ArrayList;
 import java.util.Scanner; 
 
-import org.joda.time.DateTime;
-import org.joda.time.LocalTime;
 
 
 public class Main {
@@ -29,7 +27,7 @@ public class Main {
 	}
 	
 	public ArrayList<ArrayList<String>> latestWorkouts(int n) { //oppg 2
-		ArrayList<ArrayList<String>> res = UseDB.getTable("SELECT * FROM workout WHERE date_time < CURDATE() ORDER by (date_time) DESC limit 0,"+n+";"); 
+		ArrayList<ArrayList<String>> res = UseDB.getTable("SELECT * FROM workout WHERE date_time < CURDATE() ORDER by (date_time) DESC limit 0," + n); 
 		return res;
 	}
 	
@@ -37,7 +35,7 @@ public class Main {
 	public ArrayList<ArrayList<String>> resultLogs(String exercise, String startDatetime, String endDatetime) { //oppg 3
 		ArrayList<ArrayList<String>> res = UseDB.getTable("SELECT DISTINCT name, date_time,"
 				+ " performance, note FROM ((workout join ex_in_workout on workout.date_time ="
-				+ " ex_in_workout.workout_date_time) join exercise on exercise.name = exercise.name)"
+				+ " ex_in_workout.workout_date_time) join exercise on ex_in_workout.ex_name = exercise.name)"
 				+ " WHERE name = '" + exercise + "' AND date_time > '" + startDatetime + "' AND date_time < '"
 				+ endDatetime + "'");
 		return res;
@@ -135,7 +133,6 @@ public class Main {
 					
 				default:
 					System.out.println("Not a command");
-			
 			}
 		}
 	}
