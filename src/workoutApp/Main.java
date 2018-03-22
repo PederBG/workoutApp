@@ -60,9 +60,9 @@ public class Main {
 		}
 	}
 
-	public ArrayList<ArrayList<String>> numberOfWorkouts() { //oppg 5
+	public String numberOfWorkouts() { //oppg 5
 		ArrayList<ArrayList<String>> numberOfWorkouts = UseDB.getTable("SELECT COUNT(*) FROM workout"); //denne funker:)
-			return numberOfWorkouts;
+			return numberOfWorkouts.get(0).get(0);
 		}
 	//--------------------------------------------------------------------------------------
 
@@ -71,6 +71,8 @@ public class Main {
 		Scanner scan = new Scanner(System.in);
 		String in = "";
 		String arg1, arg2, arg3, arg4, arg5, arg6;
+		
+		//NOTE: This is hardcoded because making the java code was not the main objective of this project
 
 		printInfo();
 		while (true) {
@@ -101,14 +103,45 @@ public class Main {
 				case "REGWORK":
 					System.out.print("Workout datetime (yyyy-mm-dd tt:mm:ss): ");
 					arg1 = scan.nextLine();
+					while (!isValidDateTime(arg1)) {
+						System.out.println("Not a valid datetime!");
+						System.out.print("Workout datetime (yyyy-mm-dd tt:mm:ss): ");
+						arg1 = scan.nextLine();
+					}
 					System.out.print("Workout length (tt:mm:ss): ");
 					arg2 = scan.nextLine();
 					System.out.print("Info: ");
 					arg3 = scan.nextLine();
 					System.out.print("Shape (1-10): ");
 					arg4 = scan.nextLine();
+					while (true) {
+					try {
+							int toInt = Integer.parseInt(arg4);
+							if (toInt < 0 || toInt > 10) {
+								throw new Exception();
+							}
+							break;
+						}catch (Exception e) {
+							System.out.println("Not a valid number!");
+							System.out.print("Shape (1-10): ");
+							arg4 = scan.nextLine();
+						}
+					}
 					System.out.print("Performance (1-10): ");
 					arg5 = scan.nextLine();
+					while (true) {
+					try {
+							int toInt = Integer.parseInt(arg5);
+							if (toInt < 0 || toInt > 10) {
+								throw new Exception();
+							}
+							break;
+						}catch (Exception e) {
+							System.out.println("Not a valid number!");
+							System.out.print("Performance (1-10): ");
+							arg5 = scan.nextLine();
+						}
+					}
 					System.out.print("Note: ");
 					arg6 = scan.nextLine();
 					registerWorkout(arg1, arg2, arg3, Integer.parseInt(arg4), Integer.parseInt(arg5), arg6);
@@ -127,18 +160,34 @@ public class Main {
 					arg1 = scan.nextLine();
 					System.out.print("Start datetime (yyyy-mm-dd tt:mm:ss): ");
 					arg2 = scan.nextLine();
+					while (!isValidDateTime(arg2)) {
+						System.out.println("Not a valid datetime!");
+						System.out.print("Start datetime (yyyy-mm-dd tt:mm:ss): ");
+						arg2 = scan.nextLine();
+					}
+					
 					System.out.print("End datetime (yyyy-mm-dd tt:mm:ss): ");
 					arg3 = scan.nextLine();
+					while (!isValidDateTime(arg3)) {
+						System.out.println("Not a valid datetime!");
+						System.out.print("End datetime (yyyy-mm-dd tt:mm:ss): ");
+						arg3 = scan.nextLine();
+					}
+					
 					System.out.println(resultLogs(arg1, arg2, arg3));
 					break;
 
 				case "EXINGROUP":
-					System.out.print("Exercisegroupname: ");
+					System.out.print("Exercise group name: ");
 					arg1 = scan.nextLine();
 					if ( similarExercises(arg1) == null) {
-						System.out.println("Invalid exercisename.. Try again!");
+						System.out.println("Invalid exercise name.. Try again!");
 					}
 					else { System.out.println("Exercises in "+arg1+": "+similarExercises(arg1));}
+					break;
+				
+				case "NUMWORKS":
+					System.out.println("Number of total workouts: " + numberOfWorkouts());
 					break;
 
 				case "INFO":
@@ -170,7 +219,7 @@ public class Main {
 				+ "   - Regeister exercise group: REGGROUP\n"
 				+ "   - View results log from time period: RESLOG\n"
 				+ "   - Get exercise in group: EXINGROUP\n"
-				+ "TODO"
+				+ "   - Get total number of workouts: NUMWORKS\n"
 				+ "   - Get this info again: INFO or HELP\n"
 				+ "   - Exit of of the app: QUIT or EXIT\n");
 	}
@@ -186,9 +235,8 @@ public class Main {
 	public static void main(String[] args) throws ParseException {
 		Main m = new Main();
 
-		//m.textAppLoop();
-		
-		//System.out.println(checkBirthDay("2018-02-30 12:00:00"));
+		m.textAppLoop();
+
 	}
 
 }
